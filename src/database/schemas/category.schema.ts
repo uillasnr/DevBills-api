@@ -1,7 +1,6 @@
+import mongoose from "mongoose";
 
- import mongoose from "mongoose";
-
-const CategorySchema = new mongoose.Schema(
+export const CategorySchema = new mongoose.Schema(
   {
     title: String,
     color: String,
@@ -9,6 +8,6 @@ const CategorySchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-export const CategoryModel = mongoose.model('Category', CategorySchema); 
+export const CategoryModel = mongoose.model("Category", CategorySchema);
 
 // ENTITY => SERVICE => CONTROLLER => ROUTE

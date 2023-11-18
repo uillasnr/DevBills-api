@@ -1,4 +1,4 @@
-import { CategoriesRepository } from "../database/schemas/repositories/categories.repository";
+import { CategoriesRepository } from "../database/repositories/categories.repository";
 import { CreateCategoryDTO } from "../dtos/categories.dtos";
 import { StatusCodes } from "http-status-codes";
 import { Category } from "../entities/category.entity";
