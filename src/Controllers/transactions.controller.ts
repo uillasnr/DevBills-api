@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { TransactionsService } from "../services/transactions.service";
-import { CreateTransactionDTO } from "../dtos/transactions.dto";
+import {
+  CreateTransactionDTO,
+  indexTransactionsDTO,
+} from "../dtos/transactions.dto";
 
 export class TransactionsController {
   constructor(private transactionsService: TransactionsService) {}
@@ -28,13 +31,25 @@ export class TransactionsController {
     }
   };
 
-  /*   index = async (_: Request, res: Response, next: NextFunction) => {
+  //lidar com a busca de transações com base em filtros
+  index = async (
+    req: Request<unknown, unknown, unknown, indexTransactionsDTO>,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
-      const result = await this.transactionsService.index();
+      const { title, categoryId, beginDate, endDate } = req.query;
+      // Chamar o serviço para buscar transações com base nos filtros fornecidos
+      const result = await this.transactionsService.index({
+        title,
+        categoryId,
+        beginDate,
+        endDate,
+      });
 
       return res.status(StatusCodes.OK).json(result);
     } catch (error) {
       next(error);
     }
-  }; */
+  };
 }

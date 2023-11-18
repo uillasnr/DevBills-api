@@ -6,7 +6,7 @@ import { TransactionsFactory } from "../factories/transactions.factory";
 
 export const TransactionsRoutes = Router();
 const controller = new TransactionsController(
-  TransactionsFactory.getServicesInstance(),
+  TransactionsFactory.getServicesInstance()
 );
 
 TransactionsRoutes.post(
@@ -15,7 +15,7 @@ TransactionsRoutes.post(
     schema: createTransactionsSchema,
     type: ParamsType.BODY,
   }),
-  controller.create,
+  controller.create
 );
 
-/* TransactionsRoutes.get("/", controller.index); */
+TransactionsRoutes.get("/", controller.index);
