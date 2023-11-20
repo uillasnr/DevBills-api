@@ -2,11 +2,15 @@ import { CategoriesRepository } from "../database/repositories/categories.reposi
 import { TransactionsRepository } from "../database/repositories/transactions.repositories";
 import {
   CreateTransactionDTO,
+  GetDashboardDTO,
+  GetFinancialEvolutionDTO,
   indexTransactionsDTO,
 } from "../dtos/transactions.dto";
 import { Transaction } from "../entities/transactions.entity";
 import { StatusCodes } from "http-status-codes";
 import { AppError } from "../errors/app.error";
+import { Balance } from "../entities/balance.entity";
+import { Expense } from "../entities/expense.entities";
 
 export class TransactionsService {
   constructor(
@@ -47,5 +51,41 @@ export class TransactionsService {
     const transaction = await this.transactionsRepository.index(filters);
 
     return transaction;
+  }
+
+  async getDashboard({
+    beginDate,
+    endDate,
+  }: GetDashboardDTO): Promise<{ balance: Balance; expenses: Expense[] }> {
+    // Obter o saldo e as despesas assíncronamente
+    let [balance, expenses] = await Promise.all([
+      this.transactionsRepository.getBalance({
+        beginDate,
+        endDate,
+      }),
+      this.transactionsRepository.getExpenses({
+        beginDate,
+        endDate,
+      }),
+    ]);
+    // Se o saldo não estiver definido, inicializá-lo com valores padrão
+    if (!balance) {
+      balance = new Balance({
+        _id: null,
+        incomes: 0,
+        expenses: 0,
+        balance: 0,
+      });
+    }
+    return { balance, expenses };
+  }
+
+  async getFinancialEvolution({
+    year,
+  }: GetFinancialEvolutionDTO): Promise<Balance[]> {
+    const financialEvolution =
+      await this.transactionsRepository.getFinancialEvolution({ year });
+   
+    return financialEvolution;
   }
 }

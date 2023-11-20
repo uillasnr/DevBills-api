@@ -3,14 +3,17 @@ import { StatusCodes } from "http-status-codes";
 import { TransactionsService } from "../services/transactions.service";
 import {
   CreateTransactionDTO,
+  GetDashboardDTO,
+  GetFinancialEvolutionDTO,
   indexTransactionsDTO,
 } from "../dtos/transactions.dto";
+import { BodyRequest, QueryRequest } from "./types";
 
 export class TransactionsController {
   constructor(private transactionsService: TransactionsService) {}
 
   create = async (
-    req: Request<unknown, unknown, CreateTransactionDTO>,
+    req: BodyRequest<CreateTransactionDTO>,
     res: Response,
     next: NextFunction
   ) => {
@@ -33,7 +36,7 @@ export class TransactionsController {
 
   //lidar com a busca de transações com base em filtros
   index = async (
-    req: Request<unknown, unknown, unknown, indexTransactionsDTO>,
+    req: QueryRequest<indexTransactionsDTO>,
     res: Response,
     next: NextFunction
   ) => {
@@ -45,6 +48,43 @@ export class TransactionsController {
         categoryId,
         beginDate,
         endDate,
+      });
+
+      return res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getDashBoard = async (
+    req: QueryRequest<GetDashboardDTO>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { beginDate, endDate } = req.query;
+      // Chamar o serviço para buscar transações com base nos filtros fornecidos
+      const result = await this.transactionsService.getDashboard({
+        beginDate,
+        endDate,
+      });
+
+      return res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getFinancialEvolution = async (
+    req: QueryRequest< GetFinancialEvolutionDTO>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { year } = req.query;
+
+      const result = await this.transactionsService.getFinancialEvolution({
+        year,
       });
 
       return res.status(StatusCodes.OK).json(result);
