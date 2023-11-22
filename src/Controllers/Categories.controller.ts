@@ -13,9 +13,13 @@ export class CategoriesController {
     next: NextFunction
   ) => {
     try {
-      const { title, color } = req.body;
+      const { title, Icon, color } = req.body;
 
-      const result = await this.categoriesService.create({ title, color });
+      const result = await this.categoriesService.create({
+        title,
+        Icon,
+        color,
+      });
 
       return res.status(StatusCodes.CREATED).json(result);
     } catch (error) {

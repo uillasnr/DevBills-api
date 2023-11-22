@@ -7,7 +7,7 @@ import { AppError } from "../errors/app.error";
 export class CategoriesService {
   constructor(private categoriesRepository: CategoriesRepository) {}
 
-  async create({ title, color }: CreateCategoryDTO): Promise<Category> {
+  async create({ title, Icon, color }: CreateCategoryDTO): Promise<Category> {
     const foundCategory = await this.categoriesRepository.findByTitle(title);
 
     if (foundCategory) {
@@ -15,6 +15,7 @@ export class CategoriesService {
     }
     const category = new Category({
       title,
+      Icon,
       color,
     });
 
