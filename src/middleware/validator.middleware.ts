@@ -6,6 +6,7 @@ import { AppError } from "../errors/app.error";
 export enum ParamsType {
   QUERY = "query",
   BODY = "body",
+  PARAMS = "params",
 }
 
 type validateParams = {

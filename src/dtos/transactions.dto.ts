@@ -39,3 +39,10 @@ export const getFinancialEvolutionSchema = {
 };
 const getFinancialEvolutionObject = z.object(getFinancialEvolutionSchema);
 export type GetFinancialEvolutionDTO = z.infer<typeof getFinancialEvolutionObject>;
+
+export const getTransactionByIdSchema = {
+  id: z.string(), 
+};
+
+const getTransactionByIdObject = z.object(getTransactionByIdSchema);
+export type GetTransactionByIdDTO = z.infer<typeof getTransactionByIdObject>;

@@ -53,6 +53,17 @@ export class TransactionsService {
     return transaction;
   }
 
+  // Chamar o repositório para buscar a transação pelo ID
+  async getTransactionById(id: string): Promise<Transaction | null> {
+    try {
+      const transaction = await this.transactionsRepository.getTransactionById(id);
+      return transaction;
+    } catch (error) {
+      console.error('Error fetching transaction by ID:', error);
+      return null;
+    }
+  }
+
   async getDashboard({
     beginDate,
     endDate,
@@ -85,7 +96,7 @@ export class TransactionsService {
   }: GetFinancialEvolutionDTO): Promise<Balance[]> {
     const financialEvolution =
       await this.transactionsRepository.getFinancialEvolution({ year });
-   
+
     return financialEvolution;
   }
 }

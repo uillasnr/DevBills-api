@@ -63,6 +63,25 @@ export class TransactionsRepository {
     return transactionMap;
   }
 
+// Buscar a transação pelo ID no banco de dados
+async getTransactionById(id: string): Promise<Transaction | null> {
+  try {
+    const transaction = await this.model.findById(id);
+
+    if (!transaction) {
+      return null;
+    }
+
+    const transactionObject = transaction.toObject<Transaction>();
+    
+    return transactionObject;
+  } catch (error) {
+    console.error("Error fetching transaction:", error); // Adicionando log de erro
+    return null;
+  }
+}
+
+
   async getBalance({ beginDate, endDate }: GetDashboardDTO): Promise<Balance> {
     const aggregate = this.model.aggregate<Balance>();
 

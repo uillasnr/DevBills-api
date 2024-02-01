@@ -4,6 +4,7 @@ import {
   createTransactionsSchema,
   getDashboardSchema,
   getFinancialEvolutionSchema,
+  getTransactionByIdSchema,
   indexTransactionSchema,
 } from "../dtos/transactions.dto";
 import { TransactionsController } from "../Controllers/transactions.controller";
@@ -48,4 +49,13 @@ TransactionsRoutes.get(
     type: ParamsType.QUERY,
   }),
   controller.getFinancialEvolution
+);
+
+TransactionsRoutes.get(
+  "/:id",
+  validator({
+    schema: getTransactionByIdSchema, // Valide os parâmetros da solicitação
+    type: ParamsType.PARAMS,
+  }),
+  controller.getTransactionDetails
 );
