@@ -12,6 +12,7 @@ type TransactionProps = {
   date: Date;
   category: Category;
   type: TransactionType;
+  observation?: string;
 };
 
 export class Transaction {
@@ -21,13 +22,15 @@ export class Transaction {
   public date: Date;
   public category: Category;
   public type: TransactionType;
+  public observation?: string;
 
-  constructor({ _id, title, type, date, amount, category }: TransactionProps) {
+  constructor({ _id, title, type, date, amount, category,observation }: TransactionProps) {
     this._id = _id;
     this.title = title;
     this.amount = amount;
     this.date = new Date(date);
     this.category = new Category(category);
     this.type = type;
+    this.observation = observation;
   }
 }

@@ -19,6 +19,7 @@ export class TransactionsRepository {
     date,
     amount,
     type,
+    observation,
     category,
   }: Transaction): Promise<Transaction> {
     const createdTransaction = await this.model.create({
@@ -26,6 +27,7 @@ export class TransactionsRepository {
       date,
       amount,
       type,
+      observation,
       category,
     });
 

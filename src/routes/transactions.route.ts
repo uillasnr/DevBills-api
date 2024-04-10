@@ -37,7 +37,7 @@ TransactionsRoutes.get(
   "/deshboard",
   validator({
     schema: getDashboardSchema,
-    type: ParamsType.BODY,
+    type: ParamsType.QUERY,
   }),
   controller.getDashBoard
 );

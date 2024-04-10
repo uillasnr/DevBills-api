@@ -18,7 +18,7 @@ export class TransactionsController {
     next: NextFunction
   ) => {
     try {
-      const { title, amount, categoryId, date, type } = req.body;
+      const { title, amount, categoryId, date, type, observation } = req.body;
 
       const result = await this.transactionsService.create({
         title,
@@ -26,6 +26,7 @@ export class TransactionsController {
         categoryId,
         date,
         type,
+        observation
       });
 
       return res.status(StatusCodes.CREATED).json(result);
