@@ -14,12 +14,12 @@ const createUserObject = z.object(createUserSchema);
 export type CreateUserDTO = z.infer<typeof createUserObject>;
 
 // Esquema para fazer login de usuário
-export const loginUserSchema = {
-  email: z.string().email(), // Email do usuário (string no formato de email válido)
-  password: z.string(), // Senha do usuário (string)
+export const LoginUserSchema = {
+  email: z.string().email(), 
+  password: z.string(), 
 };
 
 // Objeto Zod correspondente ao esquema de login de usuário
-const loginUserObject = z.object(loginUserSchema);
+const LoginUserObject = z.object(LoginUserSchema);
 // Tipo inferido para fazer login de usuário
-export type LoginUserDTO = z.infer<typeof loginUserObject>;
+export type LoginUserDTO = z.infer<typeof LoginUserObject>;
