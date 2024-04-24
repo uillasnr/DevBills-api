@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response, query } from "express";
 import { StatusCodes } from "http-status-codes";
 import { TransactionsService } from "../services/transactions.service";
 import {
@@ -7,7 +7,7 @@ import {
   GetFinancialEvolutionDTO,
   indexTransactionsDTO,
 } from "../dtos/transactions.dto";
-import { BodyRequest, QueryRequest } from "./types";
+import { AuthenticatedRequest, BodyRequest, QueryRequest } from "./types";
 
 export class TransactionsController {
   constructor(private transactionsService: TransactionsService) {}
@@ -18,17 +18,19 @@ export class TransactionsController {
     next: NextFunction
   ) => {
     try {
-      const { title, amount, categoryId, date, type, observation } = req.body;
+      const { userId, title, amount, categoryId, date, type, observation } =
+        req.body;
 
       const result = await this.transactionsService.create({
+        userId: userId,
         title,
         amount,
         categoryId,
         date,
         type,
-        observation
+        observation,
       });
-
+   
       return res.status(StatusCodes.CREATED).json(result);
     } catch (error) {
       next(error);
@@ -37,14 +39,17 @@ export class TransactionsController {
 
   //lidar com a busca de transações com base em filtros
   index = async (
-    req: QueryRequest<indexTransactionsDTO>,
+    req: QueryRequest<indexTransactionsDTO> & AuthenticatedRequest<unknown>,
     res: Response,
     next: NextFunction
   ) => {
     try {
+      const userId = req.user.id;
       const { title, categoryId, beginDate, endDate } = req.query;
+
       // Chamar o serviço para buscar transações com base nos filtros fornecidos
       const result = await this.transactionsService.index({
+        userId,
         title,
         categoryId,
         beginDate,
@@ -58,8 +63,8 @@ export class TransactionsController {
   };
 
   // Buscar detalhes de uma transação pelo ID
-  getTransactionDetails = async (
-    req: Request<{ id: string }>, 
+  /*  getTransactionDetails = async (
+    req: Request<{ id: string userId: string }>, 
     res: Response,
     next: NextFunction
 ) => {
@@ -67,7 +72,7 @@ export class TransactionsController {
         const id  = req.params.id; 
 
         // Chamar o serviço para buscar os detalhes da transação pelo ID
-        const transactionDetails = await this.transactionsService.getTransactionById(id);
+        const transactionDetails = await this.transactionsService.getTransactionById(id, userId);
 
         console.log("Detalhes da transação encontrados:", transactionDetails);
 
@@ -76,17 +81,20 @@ export class TransactionsController {
         console.error("Erro ao buscar detalhes da transação pelo ID:", error);
         next(error);
     }
-};
+}; */
 
   getDashBoard = async (
-    req: QueryRequest<GetDashboardDTO>,
+    req: QueryRequest<GetDashboardDTO>& AuthenticatedRequest<unknown>,
     res: Response,
     next: NextFunction
   ) => {
     try {
+      const userId = req.user.id;
       const { beginDate, endDate } = req.query;
+
       // Chamar o serviço para buscar transações com base nos filtros fornecidos
       const result = await this.transactionsService.getDashboard({
+        userId,
         beginDate,
         endDate,
       });
@@ -98,7 +106,7 @@ export class TransactionsController {
   };
 
   getFinancialEvolution = async (
-    req: QueryRequest< GetFinancialEvolutionDTO>,
+    req: QueryRequest<GetFinancialEvolutionDTO>,
     res: Response,
     next: NextFunction
   ) => {
