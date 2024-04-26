@@ -3,6 +3,7 @@ import { CategoriesController } from "../Controllers/Categories.controller";
 import { ParamsType, validator } from "../middleware/validator.middleware";
 import { createCategorySchema } from "../dtos/categories.dtos";
 import { CategoriesFactory } from "../factories/categories.factory";
+import authMiddleware from "../middleware/auth.middleware";
 
 export const CategoriesRoutes = Router();
 const controller = new CategoriesController(
@@ -11,6 +12,7 @@ const controller = new CategoriesController(
 
 CategoriesRoutes.post(
   "/",
+  authMiddleware,
   validator({
     schema: createCategorySchema,
     type: ParamsType.BODY,
@@ -18,4 +20,4 @@ CategoriesRoutes.post(
   controller.create
 );
 
-CategoriesRoutes.get("/", controller.index);
+CategoriesRoutes.get("/", authMiddleware,controller.index);

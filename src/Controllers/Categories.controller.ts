@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { CategoriesService } from "../services/categories.services";
 import { CreateCategoryDTO } from "../dtos/categories.dtos";
 import { StatusCodes } from "http-status-codes";
-import { BodyRequest } from "./types";
+import { AuthenticatedRequest, BodyRequest } from "./types";
 
 export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}
@@ -13,9 +13,10 @@ export class CategoriesController {
     next: NextFunction
   ) => {
     try {
-      const { title, Icon, color } = req.body;
+      const {userId, title, Icon, color } = req.body;
 
       const result = await this.categoriesService.create({
+        userId,
         title,
         Icon,
         color,
@@ -27,10 +28,11 @@ export class CategoriesController {
     }
   };
 
-  index = async (_: Request, res: Response, next: NextFunction) => {
+  index = async (req: AuthenticatedRequest<unknown>, res: Response, next: NextFunction) => {
     try {
-      const result = await this.categoriesService.index();
-
+      const userId = req.user.id;
+      const result = await this.categoriesService.index(userId);
+  
       return res.status(StatusCodes.OK).json(result);
     } catch (error) {
       next(error);

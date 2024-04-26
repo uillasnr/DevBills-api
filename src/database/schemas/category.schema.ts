@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 export const CategorySchema = new mongoose.Schema(
   {
+    userId: String,
     title: String,
     Icon: String,
     color: String,

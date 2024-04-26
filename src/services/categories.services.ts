@@ -7,13 +7,19 @@ import { AppError } from "../errors/app.error";
 export class CategoriesService {
   constructor(private categoriesRepository: CategoriesRepository) {}
 
-  async create({ title, Icon, color }: CreateCategoryDTO): Promise<Category> {
+  async create({
+    userId,
+    title,
+    Icon,
+    color,
+  }: CreateCategoryDTO): Promise<Category> {
     const foundCategory = await this.categoriesRepository.findByTitle(title);
 
     if (foundCategory) {
       throw new AppError("Category already exists.", StatusCodes.BAD_REQUEST);
     }
     const category = new Category({
+      userId,
       title,
       Icon,
       color,
@@ -24,11 +30,9 @@ export class CategoriesService {
     return createdCategory;
   }
 
-  async index(): Promise<Category[]> {
-    const Categories = await this.categoriesRepository.index();
+  async index(userId: string): Promise<Category[]> {
+    const Categories = await this.categoriesRepository.index(userId);
 
     return Categories;
   }
 }
-
-///ENTITY => SERVICE => CONTROLLER

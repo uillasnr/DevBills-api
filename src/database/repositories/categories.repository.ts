@@ -4,8 +4,8 @@ import { CategoryModel } from "../schemas/category.schema";
 export class CategoriesRepository {
   constructor(private model: typeof CategoryModel) {}
 
-  async create({ title, Icon, color }: Category): Promise<Category> {
-    const createdCategory = await this.model.create({ title, Icon, color });
+  async create({userId, title, Icon, color }: Category): Promise<Category> {
+    const createdCategory = await this.model.create({userId, title, Icon, color });
 
     return createdCategory.toObject<Category>();
   }
@@ -23,8 +23,8 @@ export class CategoriesRepository {
     return category?.toObject<Category>();
   }
 
-  async index(): Promise<Category[]> {
-    const categorias = await this.model.find();
+  async index(userId: string): Promise<Category[]> {
+    const categorias = await this.model.find({ userId });
 
     const categoriesMap = categorias.map((item) => item.toObject<Category>());
 
