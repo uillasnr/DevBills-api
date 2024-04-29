@@ -18,6 +18,7 @@ export class AuthController {
 
       const { user, token } = await this.AuthService.Login({ email, password });
 
+      console.log("teste login",user, token);
       return res.status(StatusCodes.CREATED).json({ user, token });
     } catch (error) {
       next(error);

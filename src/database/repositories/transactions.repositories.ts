@@ -11,18 +11,21 @@ import {
 import { Balance } from "../../entities/balance.entity";
 import { Expense } from "../../entities/expense.entities";
 
+
 export class TransactionsRepository {
   constructor(private model: typeof TransactionModel) {}
 
   async create({
+    userId,
     title,
     date,
     amount,
     type,
     observation,
     category,
-  }: Transaction): Promise<Transaction> {
+  }: Transaction & { userId: string }): Promise<Transaction> {
     const createdTransaction = await this.model.create({
+      userId,
       title,
       date,
       amount,
@@ -36,13 +39,20 @@ export class TransactionsRepository {
 
   // Método para buscar transações com base nos parâmetros fornecidos
   async index({
+    userId,
     title,
     categoryId,
     beginDate,
     endDate,
-  }: indexTransactionsDTO): Promise<Transaction[]> {
+  }: indexTransactionsDTO & { userId: string }): Promise<Transaction[]> {
+   
+    if (!userId) {
+      throw new Error("User ID is required.");
+    }
+
     //parâmetros de busca dinamicamente com base nos filtros fornecidos
     const whereParams: Record<string, unknown> = {
+      userId,
       ...(title && { title: { $regex: title, $options: "i" } }),
       ...(categoryId && { "category._id": categoryId }),
     };
@@ -84,9 +94,13 @@ async getTransactionById(id: string): Promise<Transaction | null> {
 }
 
 
-  async getBalance({ beginDate, endDate }: GetDashboardDTO): Promise<Balance> {
+  async getBalance(userId: string,{ beginDate, endDate }: GetDashboardDTO): Promise<Balance> {
     const aggregate = this.model.aggregate<Balance>();
 
+    // objeto de filtro inicial com o userId
+    const matchParams: Record<string, unknown> = { userId };
+
+  // data ao filtro, se forem fornecidas
     if (beginDate || endDate) {
       aggregate.match({
         date: {
@@ -95,6 +109,8 @@ async getTransactionById(id: string): Promise<Transaction | null> {
         },
       });
     }
+     // filtro na etapa de agregação
+     aggregate.match(matchParams);
 
     const [result] = await aggregate
 
@@ -168,14 +184,17 @@ async getTransactionById(id: string): Promise<Transaction | null> {
     return result;
   }
 
-  async getFinancialEvolution({
-    year,
-  }: GetFinancialEvolutionDTO): Promise<Balance[]> {
+ async getFinancialEvolution({ userId, year }: GetFinancialEvolutionDTO): Promise<Balance[]> {
+     if (!userId) {
+      throw new Error("User ID is required.");
+  }  
+
     const aggregate = this.model.aggregate<Balance>();
     
 
     const result = await aggregate
       .match({
+      userId,
         date: {
           $gte: new Date(`${year}-01-01`),
           $lte: new Date(`${year}-12-31`),
@@ -225,7 +244,7 @@ async getTransactionById(id: string): Promise<Transaction | null> {
       .sort({
         _id: 1,
       });
-
+      console.log('nao funciona', result)
     return result;
   }
 }

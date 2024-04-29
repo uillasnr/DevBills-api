@@ -7,6 +7,7 @@ export enum TransactionType {
 
 type TransactionProps = {
   _id?: string;
+  userId: string;
   title: string;
   amount: number;
   date: Date;
@@ -17,6 +18,7 @@ type TransactionProps = {
 
 export class Transaction {
   public _id?: string;
+  public userId: string;
   public title: string;
   public amount: number;
   public date: Date;
@@ -24,8 +26,18 @@ export class Transaction {
   public type: TransactionType;
   public observation?: string;
 
-  constructor({ _id, title, type, date, amount, category,observation }: TransactionProps) {
+  constructor({
+    _id,
+    userId,
+    title,
+    type,
+    date,
+    amount,
+    category,
+    observation,
+  }: TransactionProps) {
     this._id = _id;
+    this.userId = userId;
     this.title = title;
     this.amount = amount;
     this.date = new Date(date);

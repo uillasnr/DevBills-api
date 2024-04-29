@@ -106,16 +106,16 @@ export class TransactionsController {
   };
 
   getFinancialEvolution = async (
-    req: QueryRequest<GetFinancialEvolutionDTO>,
+    req: QueryRequest<GetFinancialEvolutionDTO> & AuthenticatedRequest<unknown>,
     res: Response,
     next: NextFunction
   ) => {
     try {
+     const userId = req.user.id;
       const { year } = req.query;
-
-      const result = await this.transactionsService.getFinancialEvolution({
-        year,
-      });
+console.log("ano",userId,year)
+      const result = await this.transactionsService.getFinancialEvolution({userId,  year });
+      console.log("Financial evolution result:", result);
 
       return res.status(StatusCodes.OK).json(result);
     } catch (error) {

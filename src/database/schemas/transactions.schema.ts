@@ -4,6 +4,7 @@ import { CategorySchema } from "./category.schema";
 
 const TransactionSchema = new mongoose.Schema(
   {
+    userId: String,
     title: String,
     amount: Number,
     type: String,

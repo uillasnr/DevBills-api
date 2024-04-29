@@ -9,14 +9,15 @@ import {
 } from "../dtos/transactions.dto";
 import { TransactionsController } from "../Controllers/transactions.controller";
 import { TransactionsFactory } from "../factories/transactions.factory";
+import authMiddleware from "../middleware/auth.middleware";
 
 export const TransactionsRoutes = Router();
-const controller = new TransactionsController(
-  TransactionsFactory.getServicesInstance()
-);
+const controller = new TransactionsController(TransactionsFactory.getServicesInstance());
+
 
 TransactionsRoutes.post(
   "/",
+   authMiddleware, 
   validator({
     schema: createTransactionsSchema,
     type: ParamsType.BODY,
@@ -24,8 +25,9 @@ TransactionsRoutes.post(
   controller.create
 );
 
-TransactionsRoutes.get(
+ TransactionsRoutes.get(
   "/",
+  authMiddleware,
   validator({
     schema: indexTransactionSchema,
     type: ParamsType.BODY,
@@ -35,6 +37,7 @@ TransactionsRoutes.get(
 
 TransactionsRoutes.get(
   "/deshboard",
+  authMiddleware, 
   validator({
     schema: getDashboardSchema,
     type: ParamsType.QUERY,
@@ -44,6 +47,7 @@ TransactionsRoutes.get(
 
 TransactionsRoutes.get(
   "/financial-evolution",
+  authMiddleware, 
   validator({
     schema: getFinancialEvolutionSchema,
     type: ParamsType.QUERY,
@@ -51,11 +55,12 @@ TransactionsRoutes.get(
   controller.getFinancialEvolution
 );
 
-TransactionsRoutes.get(
+/* TransactionsRoutes.get(
   "/:id",
   validator({
     schema: getTransactionByIdSchema, // Valide os parâmetros da solicitação
     type: ParamsType.PARAMS,
   }),
   controller.getTransactionDetails
-);
+); */
+ 

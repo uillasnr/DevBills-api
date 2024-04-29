@@ -19,12 +19,17 @@ export class TransactionsService {
   ) {}
 
   async create({
+    userId,
     title,
     date,
     amount,
     type,
     categoryId,
-  }: CreateTransactionDTO): Promise<Transaction> {
+  }: CreateTransactionDTO & { userId: string }): Promise<Transaction> {
+    
+    if (!userId) {
+      throw new AppError("User ID is required.", StatusCodes.BAD_REQUEST);
+    }
     //precisa validar se a categoria existe
     const category = await this.categorisRepository.findById(categoryId);
 
@@ -33,6 +38,7 @@ export class TransactionsService {
     }
     // Criar uma nova transação com base nos parâmetros fornecidos
     const transaction = new Transaction({
+      userId,
       title,
       date,
       amount,
@@ -40,13 +46,12 @@ export class TransactionsService {
       category,
     });
     // Chamar o repositório para criar a transação no banco de dados
-    const createdTransaction =
-      await this.transactionsRepository.create(transaction);
+    const createdTransaction = await this.transactionsRepository.create(transaction);
 
     return createdTransaction;
   }
   // Método para buscar transações com base nos filtros fornecidos
-  async index(filters: indexTransactionsDTO): Promise<Transaction[]> {
+  async index(filters: indexTransactionsDTO & { userId: string }): Promise<Transaction[]> {
     // Chamar o repositório para buscar transações com base nos filtros
     const transaction = await this.transactionsRepository.index(filters);
 
@@ -54,8 +59,13 @@ export class TransactionsService {
   }
 
   // Chamar o repositório para buscar a transação pelo ID
-  async getTransactionById(id: string): Promise<Transaction | null> {
+  async getTransactionById(id: string, userId: string): Promise<Transaction | null> {
     try {
+
+      if (!userId) {
+        throw new Error("User ID is required.");
+      }
+
       const transaction = await this.transactionsRepository.getTransactionById(id);
       return transaction;
     } catch (error) {
@@ -65,38 +75,41 @@ export class TransactionsService {
   }
 
   async getDashboard({
+    userId,
     beginDate,
     endDate,
-  }: GetDashboardDTO): Promise<{ balance: Balance; expenses: Expense[] }> {
-    // Obter o saldo e as despesas assíncronamente
+  }: GetDashboardDTO & { userId: string }): Promise<{ balance: Balance; expenses: Expense[] }> {
+    if (!userId) {
+      throw new Error("User ID is required.");
+    }
+  
+    // Obter o saldo e as despesas assíncronamente, passando o userId para garantir que apenas os dados do usuário logado sejam recuperados
     let [balance, expenses] = await Promise.all([
-      this.transactionsRepository.getBalance({
-        beginDate,
-        endDate,
-      }),
-      this.transactionsRepository.getExpenses({
-        beginDate,
-        endDate,
-      }),
+      this.transactionsRepository.getBalance(userId, { beginDate, endDate }),
+      this.transactionsRepository.getExpenses({ userId, beginDate, endDate }),
     ]);
+ 
     // Se o saldo não estiver definido, inicializá-lo com valores padrão
     if (!balance) {
       balance = new Balance({
-        _id: null,
+        _id: userId,
         incomes: 0,
         expenses: 0,
         balance: 0,
       });
     }
+  
     return { balance, expenses };
   }
+  
 
-  async getFinancialEvolution({
-    year,
-  }: GetFinancialEvolutionDTO): Promise<Balance[]> {
+  async getFinancialEvolution({userId, year }: GetFinancialEvolutionDTO ):  Promise<Balance[]> {
+    if (!userId) {
+      throw new AppError("User ID is required.", StatusCodes.BAD_REQUEST);
+    } 
     const financialEvolution =
-      await this.transactionsRepository.getFinancialEvolution({ year });
-
+      await this.transactionsRepository.getFinancialEvolution({userId, year });
+console.log("serfice:",year,financialEvolution)
     return financialEvolution;
   }
 }
