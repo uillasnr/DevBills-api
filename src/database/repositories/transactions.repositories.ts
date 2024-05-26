@@ -11,7 +11,6 @@ import {
 import { Balance } from "../../entities/balance.entity";
 import { Expense } from "../../entities/expense.entities";
 
-
 export class TransactionsRepository {
   constructor(private model: typeof TransactionModel) {}
 
@@ -45,7 +44,6 @@ export class TransactionsRepository {
     beginDate,
     endDate,
   }: indexTransactionsDTO & { userId: string }): Promise<Transaction[]> {
-   
     if (!userId) {
       throw new Error("User ID is required.");
     }
@@ -75,32 +73,34 @@ export class TransactionsRepository {
     return transactionMap;
   }
 
-// Buscar a transação pelo ID no banco de dados
-async getTransactionById(id: string): Promise<Transaction | null> {
-  try {
-    const transaction = await this.model.findById(id);
+  // Buscar a transação pelo ID no banco de dados
+  async getTransactionById(id: string): Promise<Transaction | null> {
+    try {
+      const transaction = await this.model.findById(id);
 
-    if (!transaction) {
+      if (!transaction) {
+        return null;
+      }
+
+      const transactionObject = transaction.toObject<Transaction>();
+
+      return transactionObject;
+    } catch (error) {
+      console.error("Error fetching transaction:", error); // Adicionando log de erro
       return null;
     }
-
-    const transactionObject = transaction.toObject<Transaction>();
-    
-    return transactionObject;
-  } catch (error) {
-    console.error("Error fetching transaction:", error); // Adicionando log de erro
-    return null;
   }
-}
 
-
-  async getBalance(userId: string,{ beginDate, endDate }: GetDashboardDTO): Promise<Balance> {
+  async getBalance(
+    userId: string,
+    { beginDate, endDate }: GetDashboardDTO
+  ): Promise<Balance> {
     const aggregate = this.model.aggregate<Balance>();
 
     // objeto de filtro inicial com o userId
     const matchParams: Record<string, unknown> = { userId };
 
-  // data ao filtro, se forem fornecidas
+    // data ao filtro, se forem fornecidas
     if (beginDate || endDate) {
       aggregate.match({
         date: {
@@ -109,8 +109,8 @@ async getTransactionById(id: string): Promise<Transaction | null> {
         },
       });
     }
-     // filtro na etapa de agregação
-     aggregate.match(matchParams);
+    // filtro na etapa de agregação
+    aggregate.match(matchParams);
 
     const [result] = await aggregate
 
@@ -154,15 +154,17 @@ async getTransactionById(id: string): Promise<Transaction | null> {
   }
 
   async getExpenses({
+    userId,
     beginDate,
     endDate,
-  }: GetDashboardDTO): Promise<Expense[]> {
+  }: GetDashboardDTO & { userId: string }): Promise<Expense[]> {
     const aggregate = this.model.aggregate<Expense>();
 
     const matchParams: Record<string, unknown> = {
+      userId,
       type: TransactionType.EXPENSE,
     };
-
+    // Adicionar data ao filtro, se forem fornecidas
     if (beginDate || endDate) {
       matchParams.date = {
         ...(beginDate && { $gte: beginDate }),
@@ -184,17 +186,19 @@ async getTransactionById(id: string): Promise<Transaction | null> {
     return result;
   }
 
- async getFinancialEvolution({ userId, year }: GetFinancialEvolutionDTO): Promise<Balance[]> {
-     if (!userId) {
+  async getFinancialEvolution({
+    userId,
+    year,
+  }: GetFinancialEvolutionDTO): Promise<Balance[]> {
+    if (!userId) {
       throw new Error("User ID is required.");
-  }  
+    }
 
     const aggregate = this.model.aggregate<Balance>();
-    
 
     const result = await aggregate
       .match({
-      userId,
+        userId,
         date: {
           $gte: new Date(`${year}-01-01`),
           $lte: new Date(`${year}-12-31`),
@@ -244,7 +248,7 @@ async getTransactionById(id: string): Promise<Transaction | null> {
       .sort({
         _id: 1,
       });
-      console.log('nao funciona', result)
+    console.log("nao funciona", result);
     return result;
   }
 }
