@@ -13,7 +13,7 @@ export class CategoriesService {
     Icon,
     color,
   }: CreateCategoryDTO): Promise<Category> {
-    const foundCategory = await this.categoriesRepository.findByTitle(title);
+    const foundCategory = await this.categoriesRepository.findByTitle(userId, title);
 
     if (foundCategory) {
       throw new AppError("Category already exists.", StatusCodes.BAD_REQUEST);

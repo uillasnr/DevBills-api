@@ -10,9 +10,9 @@ export class CategoriesRepository {
     return createdCategory.toObject<Category>();
   }
 
-  //Categorias pelo titlo
-  async findByTitle(title: string): Promise<Category | undefined> {
-    const category = await this.model.findOne({ title });
+
+  async findByTitle(userId: string, title: string): Promise<Category | undefined> {
+    const category = await this.model.findOne({ userId, title });
 
     return category?.toObject<Category>();
   }
