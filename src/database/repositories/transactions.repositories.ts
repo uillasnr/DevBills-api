@@ -61,6 +61,7 @@ export class TransactionsRepository {
         ...(endDate && { $lte: endDate }),
       };
     }
+ 
     // Realizando a busca no banco de dados com base nos parâmetros construídos
     const transactions = await this.model.find(whereParams, undefined, {
       sort: { data: -1 },
@@ -248,7 +249,7 @@ export class TransactionsRepository {
       .sort({
         _id: 1,
       });
-    console.log("nao funciona", result);
+ 
     return result;
   }
 }

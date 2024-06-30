@@ -6,6 +6,7 @@ import {
   getFinancialEvolutionSchema,
   getTransactionByIdSchema,
   indexTransactionSchema,
+  monthlyReportSchema,
 } from "../dtos/transactions.dto";
 import { TransactionsController } from "../Controllers/transactions.controller";
 import { TransactionsFactory } from "../factories/transactions.factory";
@@ -63,4 +64,14 @@ TransactionsRoutes.get(
   }),
   controller.getTransactionDetails
 ); */
+
+TransactionsRoutes.get(
+  "/monthly-report/",
+  authMiddleware,
+  validator({
+    schema: monthlyReportSchema,
+    type: ParamsType.QUERY,
+  }),
+  controller.getMonthlyReport
+);
  

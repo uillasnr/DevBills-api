@@ -43,11 +43,37 @@ export const getFinancialEvolutionSchema = {
   year: z.string(),
 };
 const getFinancialEvolutionObject = z.object(getFinancialEvolutionSchema);
-export type GetFinancialEvolutionDTO = z.infer<typeof getFinancialEvolutionObject>;
+export type GetFinancialEvolutionDTO = z.infer<
+  typeof getFinancialEvolutionObject
+>;
 
 export const getTransactionByIdSchema = {
-  id: z.string(), 
+  id: z.string(),
 };
 
 const getTransactionByIdObject = z.object(getTransactionByIdSchema);
 export type GetTransactionByIdDTO = z.infer<typeof getTransactionByIdObject>;
+
+// Adicione os DTOs para o relatório mensal
+export const monthlyReportSchema = {
+  month: z.coerce.number().min(1).max(12),
+  year: z.coerce.number().min(2000),
+};
+
+const monthlyReportObject = z.object(monthlyReportSchema);
+export type MonthlyReportDTO = z.infer<typeof monthlyReportObject>;
+
+export type MonthlyReportTransactionDTO = {
+  date: Date;
+  title: string;
+  category: string;
+  amount: number;
+  type: string;
+};
+
+export type MonthlyReportResultDTO = {
+  incomes: MonthlyReportTransactionDTO[];
+  expenses: MonthlyReportTransactionDTO[];
+  totalIncome: number;
+  totalExpense: number;
+};

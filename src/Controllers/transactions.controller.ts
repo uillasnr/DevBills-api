@@ -5,6 +5,7 @@ import {
   CreateTransactionDTO,
   GetDashboardDTO,
   GetFinancialEvolutionDTO,
+  MonthlyReportDTO,
   indexTransactionsDTO,
 } from "../dtos/transactions.dto";
 import { AuthenticatedRequest, BodyRequest, QueryRequest } from "./types";
@@ -30,7 +31,7 @@ export class TransactionsController {
         type,
         observation,
       });
-   
+
       return res.status(StatusCodes.CREATED).json(result);
     } catch (error) {
       next(error);
@@ -84,7 +85,7 @@ export class TransactionsController {
 }; */
 
   getDashBoard = async (
-    req: QueryRequest<GetDashboardDTO>& AuthenticatedRequest<unknown>,
+    req: QueryRequest<GetDashboardDTO> & AuthenticatedRequest<unknown>,
     res: Response,
     next: NextFunction
   ) => {
@@ -111,12 +112,35 @@ export class TransactionsController {
     next: NextFunction
   ) => {
     try {
-     const userId = req.user.id;
+      const userId = req.user.id;
       const { year } = req.query;
-console.log("ano",userId,year)
-      const result = await this.transactionsService.getFinancialEvolution({userId,  year });
-      console.log("Financial evolution result:", result);
 
+      const result = await this.transactionsService.getFinancialEvolution({
+        userId,
+        year,
+      });
+
+      return res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getMonthlyReport = async (
+    req: QueryRequest<MonthlyReportDTO> & AuthenticatedRequest<unknown>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userId = req.user.id;
+      const { month, year } = req.query;
+
+      const result = await this.transactionsService.getMonthlyExpenseReport({
+        userId,
+        month: Number(month),
+        year: Number(year),
+      });
+     // console.log("Generated begin and end dates:", result);
       return res.status(StatusCodes.OK).json(result);
     } catch (error) {
       next(error);
