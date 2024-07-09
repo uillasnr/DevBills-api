@@ -128,24 +128,25 @@ export class TransactionsService {
 
     return financialEvolution;
   }
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
   async getMonthlyExpenseReport({
     userId,
     month,
     year,
-  }: MonthlyReportDTO & { userId: string }): Promise<MonthlyReportResultDTO> {
+  }: MonthlyReportDTO & {
+    userId: string;
+    month: number;
+    year: number;
+  }): Promise<MonthlyReportResultDTO> {
     try {
-      const beginDate = new Date(year, month - 1, 1);
-      const endDate = new Date(year, month, 0);
 
-      const filters = {
-        userId,
-        beginDate,
-        endDate,
-      };
-
-      const transactions = await this.transactionsRepository.index(filters);
+      const transactions =
+        await this.transactionsRepository.getTransactionsByMonthYear({
+          userId,
+          month,
+          year,
+        });
 
       const incomes: MonthlyReportTransactionDTO[] = [];
       const expenses: MonthlyReportTransactionDTO[] = [];
@@ -186,6 +187,13 @@ export class TransactionsService {
         const year = date.getFullYear();
 
         return `${day}/${month}/${year}`;
+      }
+
+      function formatCurrency(value: number) {
+        return new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(value / 100);
       }
 
       // Gerando HTML para o e-mail com os dados do relatório
@@ -272,21 +280,15 @@ export class TransactionsService {
       <div class="summary">
        <img src="https://img.freepik.com/fotos-gratis/close-up-em-objetos-de-educacao-e-economia_23-2149113525.jpg" alt="Ícone de Resumo" />
        
-        <ul>
-         <p>Resumo:</p>
-          <li>Receitas Totais: R$<span class='colorIncome'> ${totalIncome.toLocaleString(
-            "pt-BR",
-            {
-              minimumFractionDigits: 2,
-            }
-          )}</span></li>
-          <li>Despesas Totais: R$<span class='colorExpense'> ${totalExpense.toLocaleString(
-            "pt-BR",
-            {
-              minimumFractionDigits: 2,
-            }
-          )}</span></li>
-        </ul>
+       <ul>
+           <p>Resumo:</p>
+            <li>Receitas Totais: <span class='colorIncome'>${formatCurrency(
+              totalIncome
+            )}</span></li>
+            <li>Despesas Totais: <span class='colorExpense'>${formatCurrency(
+              totalExpense
+            )}</span></li>
+           </ul>
       </div>
 
       <div class="category-heading">
@@ -305,12 +307,10 @@ export class TransactionsService {
               .map(
                 (expense) => `
                 <tr>
-                  <td>${formatDate(new Date(expense.date))}</td>
+                  <td>${formatDate(expense.date)}</td>
                   <td>${expense.title}</td>
                   <td>${expense.category}</td>
-                  <td>R$ ${expense.amount.toLocaleString("pt-BR", {
-                    minimumFractionDigits: 2,
-                  })}</td>
+                  <td>${formatCurrency(expense.amount)}</td>
                 </tr>
               `
               )
@@ -335,12 +335,10 @@ export class TransactionsService {
               .map(
                 (income) => `
                 <tr>
-                  <td>${formatDate(new Date(income.date))}</td>
+                  <td>${formatDate(income.date)}</td>
                   <td>${income.title}</td>
                   <td>${income.category}</td>
-                  <td>R$ ${income.amount.toLocaleString("pt-BR", {
-                    minimumFractionDigits: 2,
-                  })}</td>
+                 <td>${formatCurrency(income.amount)}</td>
                 </tr>
               `
               )

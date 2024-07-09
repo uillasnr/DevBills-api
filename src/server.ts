@@ -10,7 +10,7 @@ setupMongo().then(() => {
 
   app.use(cors());
   app.use(express.json());
-  
+
   app.use(json());
   app.use(routes);
   app.use(errorHandler);

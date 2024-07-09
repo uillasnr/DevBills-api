@@ -14,12 +14,11 @@ export class AuthController {
     next: NextFunction
   ) => {
     try {
-      const { email, password } = req.body;
+      const { name, email, password } = req.body;
 
       const { user, token } = await this.AuthService.Login({ email, password });
 
-      console.log("teste login",user, token);
-      return res.status(StatusCodes.CREATED).json({ user, token });
+      return res.status(StatusCodes.CREATED).json({ user, name, token });
     } catch (error) {
       next(error);
     }

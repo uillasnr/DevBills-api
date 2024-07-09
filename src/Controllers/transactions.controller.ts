@@ -63,26 +63,6 @@ export class TransactionsController {
     }
   };
 
-  // Buscar detalhes de uma transação pelo ID
-  /*  getTransactionDetails = async (
-    req: Request<{ id: string userId: string }>, 
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const id  = req.params.id; 
-
-        // Chamar o serviço para buscar os detalhes da transação pelo ID
-        const transactionDetails = await this.transactionsService.getTransactionById(id, userId);
-
-        console.log("Detalhes da transação encontrados:", transactionDetails);
-
-        return res.status(StatusCodes.OK).json(transactionDetails);
-    } catch (error) {
-        console.error("Erro ao buscar detalhes da transação pelo ID:", error);
-        next(error);
-    }
-}; */
 
   getDashBoard = async (
     req: QueryRequest<GetDashboardDTO> & AuthenticatedRequest<unknown>,
@@ -93,7 +73,6 @@ export class TransactionsController {
       const userId = req.user.id;
       const { beginDate, endDate } = req.query;
 
-      // Chamar o serviço para buscar transações com base nos filtros fornecidos
       const result = await this.transactionsService.getDashboard({
         userId,
         beginDate,
@@ -140,8 +119,8 @@ export class TransactionsController {
         month: Number(month),
         year: Number(year),
       });
-     // console.log("Generated begin and end dates:", result);
-      return res.status(StatusCodes.OK).json(result);
+
+     return res.status(StatusCodes.OK).json(result);
     } catch (error) {
       next(error);
     }

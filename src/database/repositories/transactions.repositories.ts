@@ -252,4 +252,30 @@ export class TransactionsRepository {
  
     return result;
   }
+
+  async getTransactionsByMonthYear({
+    userId,
+    month,
+    year,
+  }: { userId: string; month: number; year: number }): Promise<Transaction[]> {
+    if (!userId) {
+      throw new Error("User ID is required.");
+    }
+  
+    const beginDate = new Date(Date.UTC(year, month - 1, 1)); 
+    const endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999)); 
+
+    const filters = {
+      userId,
+      date: {
+        $gte: beginDate,
+        $lte: endDate,
+      },
+    };
+  
+    const transactions = await this.model.find(filters);
+  
+    return transactions.map((transaction) => transaction.toObject<Transaction>());
+  }
+  
 }
