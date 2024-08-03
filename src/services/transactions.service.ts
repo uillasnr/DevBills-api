@@ -15,6 +15,10 @@ import { AppError } from "../errors/app.error";
 import { Balance } from "../entities/balance.entity";
 import { Expense } from "../entities/expense.entities";
 import { sendEmail } from "./mailer";
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 export class TransactionsService {
   constructor(
@@ -129,18 +133,18 @@ export class TransactionsService {
     return financialEvolution;
   }
 
-
   async getMonthlyExpenseReport({
     userId,
     month,
     year,
+    email,
   }: MonthlyReportDTO & {
     userId: string;
     month: number;
     year: number;
+    email: string;
   }): Promise<MonthlyReportResultDTO> {
     try {
-
       const transactions =
         await this.transactionsRepository.getTransactionsByMonthYear({
           userId,
@@ -180,15 +184,12 @@ export class TransactionsService {
         0
       );
 
-      // Função para formatar a data no padrão desejado
+      // Função para formatar a data
       function formatDate(date: Date): string {
-        const day = String(date.getDate()).padStart(2, "0");
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const year = date.getFullYear();
-
-        return `${day}/${month}/${year}`;
+        return dayjs.utc(date).local().format('DD/MM/YYYY'); // Converte para o horário local antes de formatar
       }
-
+      
+console.log("formato da data",formatDate)
       function formatCurrency(value: number) {
         return new Intl.NumberFormat("pt-BR", {
           style: "currency",
@@ -351,11 +352,7 @@ export class TransactionsService {
 `;
 
       // Enviar e-mail com o relatório mensal de despesas
-      await sendEmail(
-        "wiliasreis@hotmail.com",
-        "Relatório Mensal de Despesas",
-        htmlContent
-      );
+      await sendEmail(email, "Relatório Mensal de Despesas", htmlContent);
 
       return {
         incomes,
