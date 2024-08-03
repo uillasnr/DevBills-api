@@ -4,7 +4,6 @@ import {
   createTransactionsSchema,
   getDashboardSchema,
   getFinancialEvolutionSchema,
-  getTransactionByIdSchema,
   indexTransactionSchema,
   monthlyReportSchema,
 } from "../dtos/transactions.dto";
@@ -13,12 +12,13 @@ import { TransactionsFactory } from "../factories/transactions.factory";
 import authMiddleware from "../middleware/auth.middleware";
 
 export const TransactionsRoutes = Router();
-const controller = new TransactionsController(TransactionsFactory.getServicesInstance());
-
+const controller = new TransactionsController(
+  TransactionsFactory.getServicesInstance()
+);
 
 TransactionsRoutes.post(
   "/",
-   authMiddleware, 
+  authMiddleware,
   validator({
     schema: createTransactionsSchema,
     type: ParamsType.BODY,
@@ -26,7 +26,7 @@ TransactionsRoutes.post(
   controller.create
 );
 
- TransactionsRoutes.get(
+TransactionsRoutes.get(
   "/",
   authMiddleware,
   validator({
@@ -38,7 +38,7 @@ TransactionsRoutes.post(
 
 TransactionsRoutes.get(
   "/deshboard",
-  authMiddleware, 
+  authMiddleware,
   validator({
     schema: getDashboardSchema,
     type: ParamsType.QUERY,
@@ -48,22 +48,13 @@ TransactionsRoutes.get(
 
 TransactionsRoutes.get(
   "/financial-evolution",
-  authMiddleware, 
+  authMiddleware,
   validator({
     schema: getFinancialEvolutionSchema,
     type: ParamsType.QUERY,
   }),
   controller.getFinancialEvolution
 );
-
-/* TransactionsRoutes.get(
-  "/:id",
-  validator({
-    schema: getTransactionByIdSchema, // Valide os parâmetros da solicitação
-    type: ParamsType.PARAMS,
-  }),
-  controller.getTransactionDetails
-); */
 
 TransactionsRoutes.get(
   "/monthly-report/",
@@ -74,4 +65,3 @@ TransactionsRoutes.get(
   }),
   controller.getMonthlyReport
 );
- 
