@@ -28,9 +28,13 @@ export class CategoriesController {
     }
   };
 
-  index = async (req: AuthenticatedRequest<unknown>, res: Response, next: NextFunction) => {
+  index = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-      const userId = req.user.id;
+      if (!req.user) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({ message: "Usuário não autenticado" });
+      }
+
+      const userId = (req.user ).id;
       const result = await this.categoriesService.index(userId);
   
       return res.status(StatusCodes.OK).json(result);

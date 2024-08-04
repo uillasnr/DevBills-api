@@ -45,7 +45,7 @@ export class TransactionsController {
     next: NextFunction
   ) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user?.id;
       const { title, categoryId, beginDate, endDate } = req.query;
 
       // Chamar o serviço para buscar transações com base nos filtros fornecidos
@@ -70,7 +70,7 @@ export class TransactionsController {
     next: NextFunction
   ) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user?.id;
       const { beginDate, endDate } = req.query;
 
       const result = await this.transactionsService.getDashboard({
@@ -91,7 +91,7 @@ export class TransactionsController {
     next: NextFunction
   ) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user?.id;
       const { year } = req.query;
 
       const result = await this.transactionsService.getFinancialEvolution({
@@ -111,13 +111,14 @@ export class TransactionsController {
     next: NextFunction
   ) => {
     try {
-      const userId = req.user.id;
-      const { month, year } = req.query;
+      const userId = req.user?.id;
+      const { month, year, email } = req.query;
 
       const result = await this.transactionsService.getMonthlyExpenseReport({
         userId,
         month: Number(month),
         year: Number(year),
+        email,
       });
 
      return res.status(StatusCodes.OK).json(result);

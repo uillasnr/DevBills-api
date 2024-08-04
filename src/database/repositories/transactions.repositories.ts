@@ -10,6 +10,7 @@ import {
 } from "../../dtos/transactions.dto";
 import { Balance } from "../../entities/balance.entity";
 import { Expense } from "../../entities/expense.entities";
+import dayjs from "dayjs";
 
 export class TransactionsRepository {
   constructor(private model: typeof TransactionModel) {}
@@ -262,19 +263,22 @@ export class TransactionsRepository {
       throw new Error("User ID is required.");
     }
   
-    const beginDate = new Date(Date.UTC(year, month - 1, 1)); 
-    const endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999)); 
+    // Data do primeiro dia do mês (00:00:00) em UTC
+    const beginDate = dayjs.utc(`${year}-${month}-01`).startOf('day').toDate(); 
+
+    // Data do último dia do mês (23:59:59.999) em UTC
+    const endDate = dayjs.utc(`${year}-${month}-01`).endOf('month').toDate(); 
 
     const filters = {
-      userId,
-      date: {
-        $gte: beginDate,
-        $lte: endDate,
-      },
+        userId,
+        date: {
+            $gte: beginDate,
+            $lte: endDate,
+        },
     };
-  
+
     const transactions = await this.model.find(filters);
-  
+   
     return transactions.map((transaction) => transaction.toObject<Transaction>());
   }
   
