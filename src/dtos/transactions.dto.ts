@@ -58,6 +58,7 @@ export type GetTransactionByIdDTO = z.infer<typeof getTransactionByIdObject>;
 export const monthlyReportSchema = {
   month: z.coerce.number().min(1).max(12),
   year: z.coerce.number().min(2000),
+  email: z.string().email(),
 };
 
 const monthlyReportObject = z.object(monthlyReportSchema);

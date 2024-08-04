@@ -15,6 +15,7 @@ export type CreateUserDTO = z.infer<typeof createUserObject>;
 
 // Esquema para fazer login de usuário
 export const LoginUserSchema = {
+  name: z.string().optional(),
   email: z.string().email(), 
   password: z.string(), 
 };
