@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint ./ --fix",
     "dev": "tsx watch ./src/server.ts",
-    "start": "npx tsx ./src/server.ts"
+    "start": "npx tsx ./src/server.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
