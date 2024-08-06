@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint ./ --fix",
-    "dev": " npx tsx ./src/server.ts",
+    "dev": "tsx watch ./src/server.ts",
     "start": "npx tsx ./src/server.ts",
-   "build": "chmod +x ./node_modules/.bin/tsc && tsc"
+    "build": "chmod +x ./node_modules/.bin/tsc && tsc"
   },
   "keywords": [],
   "author": "",
