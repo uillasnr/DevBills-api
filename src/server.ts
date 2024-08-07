@@ -7,8 +7,23 @@ import cors from "cors";
 
 setupMongo().then(() => {
   const app = express();
+  
+  //.env e dividir em um array
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
 
-  app.use(cors());
+  const corsOptions = {
+    origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: 'Content-Type,Authorization'
+  };
+
+  app.use(cors(corsOptions));
   app.use(express.json());
 
   app.use(json());
