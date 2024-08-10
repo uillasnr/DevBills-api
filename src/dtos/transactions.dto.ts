@@ -29,6 +29,20 @@ export const indexTransactionSchema = {
 const indexTransactionsObject = z.object(indexTransactionSchema);
 export type indexTransactionsDTO = z.infer<typeof indexTransactionsObject>;
 
+// Definindo o esquema para a atualização de transações
+export const updateTransactionsSchema = {
+  title: z.string().optional(),
+  amount: z.number().int().positive().optional(),
+  type: z.nativeEnum(TransactionType).optional(),
+  observation: z.string().optional(),
+  date: z.coerce.date().optional(),
+  categoryId: z.string().length(24).optional(),
+};
+
+// Criando o objeto de transação utilizando o esquema definido acima
+const updateTransactionObject = z.object(updateTransactionsSchema);
+export type UpdateTransactionDTO = z.infer<typeof updateTransactionObject>;
+
 export const getDashboardSchema = {
   userId: z.string().length(24).optional(),
   beginDate: z.coerce.date().optional(),

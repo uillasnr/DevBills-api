@@ -6,6 +6,7 @@ import {
   getFinancialEvolutionSchema,
   indexTransactionSchema,
   monthlyReportSchema,
+  updateTransactionsSchema,
 } from "../dtos/transactions.dto";
 import { TransactionsController } from "../Controllers/transactions.controller";
 import { TransactionsFactory } from "../factories/transactions.factory";
@@ -34,6 +35,16 @@ TransactionsRoutes.get(
     type: ParamsType.BODY,
   }),
   controller.index
+);
+
+TransactionsRoutes.put(
+  "/:id",
+  authMiddleware,
+  validator({
+    schema: updateTransactionsSchema,
+    type: ParamsType.QUERY,
+  }),
+  controller.update
 );
 
 TransactionsRoutes.get(

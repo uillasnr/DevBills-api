@@ -6,6 +6,7 @@ import {
   GetDashboardDTO,
   GetFinancialEvolutionDTO,
   MonthlyReportDTO,
+  UpdateTransactionDTO,
   indexTransactionsDTO,
 } from "../dtos/transactions.dto";
 import { AuthenticatedRequest, BodyRequest, QueryRequest } from "./types";
@@ -63,6 +64,31 @@ export class TransactionsController {
     }
   };
 
+  update = async (
+    req: BodyRequest<UpdateTransactionDTO> & AuthenticatedRequest<unknown>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userId = req.user?.id;
+      const transactionId = req.params.id;
+      const { title, amount, categoryId, date, type, observation } = req.body;
+
+      const result = await this.transactionsService.update(
+        transactionId,
+        userId!,
+        { title, amount, categoryId, date, type, observation }
+      );
+  
+      if (!result) {
+        return res.status(StatusCodes.NOT_FOUND).json({ message: "Transaction not found" });
+      }
+
+      return res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
 
   getDashBoard = async (
     req: QueryRequest<GetDashboardDTO> & AuthenticatedRequest<unknown>,

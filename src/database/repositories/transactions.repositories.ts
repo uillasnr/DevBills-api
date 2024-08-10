@@ -75,6 +75,27 @@ export class TransactionsRepository {
     return transactionMap;
   }
 
+  async update(
+    id: string,
+    updateData: Partial<Transaction> & { userId: string }
+  ): Promise<Transaction | null> {
+    const transaction = await this.model.findById(id);
+  
+    if (!transaction) {
+      return null; 
+    }
+
+    if (transaction.userId !== updateData.userId) {
+      throw new Error("Unauthorized: You do not have permission to edit this transaction.");
+    }
+  
+    Object.assign(transaction, updateData);
+  
+    await transaction.save();
+  
+    return transaction.toObject<Transaction>(); 
+  }
+  
   // Buscar a transação pelo ID no banco de dados
   async getTransactionById(id: string): Promise<Transaction | null> {
     try {

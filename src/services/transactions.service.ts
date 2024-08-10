@@ -7,6 +7,7 @@ import {
   MonthlyReportDTO,
   MonthlyReportResultDTO,
   MonthlyReportTransactionDTO,
+  UpdateTransactionDTO,
   indexTransactionsDTO,
 } from "../dtos/transactions.dto";
 import { Transaction } from "../entities/transactions.entity";
@@ -69,6 +70,40 @@ export class TransactionsService {
 
     return transaction;
   }
+
+  async update(
+    id: string,
+    userId: string,
+    updateData: Partial<UpdateTransactionDTO> 
+  ): Promise<Transaction | null> {
+    if (!userId) {
+      throw new AppError("User ID is required.", StatusCodes.BAD_REQUEST);
+    }
+  
+    const existingTransaction = await this.transactionsRepository.getTransactionById(id);
+  
+    if (!existingTransaction) {
+      throw new AppError("Transaction not found.", StatusCodes.NOT_FOUND);
+    }
+  
+    if (existingTransaction.userId !== userId) {
+      throw new AppError("Unauthorized: You do not have permission to edit this transaction.", StatusCodes.FORBIDDEN);
+    }
+  
+    if (updateData.categoryId) {
+      const category = await this.categorisRepository.findById(updateData.categoryId);
+      if (!category) {
+        throw new AppError("Category does not exist.", StatusCodes.NOT_FOUND);
+      }
+    }
+  
+    Object.assign(existingTransaction, updateData);
+  
+    const updatedTransaction = await this.transactionsRepository.update(id, existingTransaction);
+  
+    return updatedTransaction;
+  }
+  
 
   // Chamar o repositório para buscar a transação pelo ID
   async getTransactionById(
@@ -189,7 +224,7 @@ export class TransactionsService {
         return dayjs.utc(date).local().format('DD/MM/YYYY'); // Converte para o horário local antes de formatar
       }
       
-console.log("formato da data",formatDate)
+
       function formatCurrency(value: number) {
         return new Intl.NumberFormat("pt-BR", {
           style: "currency",
