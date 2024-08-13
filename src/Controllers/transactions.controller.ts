@@ -64,6 +64,28 @@ export class TransactionsController {
     }
   };
 
+  getTransactionById = async (
+    req: AuthenticatedRequest<unknown>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const transactionId = req.params.id;
+      const userId = req.user?.id;
+
+      const transaction = await this.transactionsService.getTransactionById(transactionId, userId!);
+
+      if (!transaction) {
+        return res.status(StatusCodes.NOT_FOUND).json({ message: "Transaction not found" });
+      }
+
+      return res.status(StatusCodes.OK).json(transaction);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
   update = async (
     req: BodyRequest<UpdateTransactionDTO> & AuthenticatedRequest<unknown>,
     res: Response,

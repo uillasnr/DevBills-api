@@ -48,6 +48,16 @@ TransactionsRoutes.put(
 );
 
 TransactionsRoutes.get(
+  "/getTransaction/:id",
+  authMiddleware,
+  validator({
+    schema: indexTransactionSchema,
+    type: ParamsType.QUERY,
+  }),
+  controller.getTransactionById
+);
+
+TransactionsRoutes.get(
   "/deshboard",
   authMiddleware,
   validator({
