@@ -4,6 +4,7 @@ import { CategoriesRoutes } from "./categories.route";
 import { TransactionsRoutes } from "./transactions.route";
 import { UserRoutes } from "./user.route";
 import { AuthRoutes } from "./auth.route";
+import { goalTrackingRouter } from "./goalTracking.routes";
 
 export const routes = Router();
 
@@ -12,4 +13,5 @@ routes.use("/user", UserRoutes);
 routes.use("/login", AuthRoutes);
 routes.use("/categories", CategoriesRoutes);
 routes.use("/transactions", TransactionsRoutes);
+routes.use("/metas", goalTrackingRouter);
 
