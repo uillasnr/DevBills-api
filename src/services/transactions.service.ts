@@ -35,6 +35,7 @@ export class TransactionsService {
     type,
     categoryId,
     observation,
+    isFixed,
   }: CreateTransactionDTO & { userId: string }): Promise<Transaction> {
     if (!userId) {
       throw new AppError("User ID is required.", StatusCodes.BAD_REQUEST);
@@ -54,6 +55,7 @@ export class TransactionsService {
       type,
       category,
       observation,
+      isFixed,
     });
     // Chamar o repositório para criar a transação no banco de dados
     const createdTransaction =
@@ -103,8 +105,17 @@ export class TransactionsService {
   
     return updatedTransaction;
   }
-  
 
+  async deleteTransaction( transactionId: string, userId: string ): Promise<boolean> {
+   
+    if (!userId) {
+      throw new AppError("User ID is required.", StatusCodes.BAD_REQUEST);
+    }
+  
+    const result = await this.transactionsRepository.delete(transactionId, userId);
+    return result;
+  }
+  
   // Chamar o repositório para buscar a transação pelo ID
   async getTransactionById(
     id: string,

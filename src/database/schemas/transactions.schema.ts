@@ -9,6 +9,7 @@ const TransactionSchema = new mongoose.Schema(
     amount: Number,
     type: String,
     date: Date,
+    isFixed: { type: Boolean, default: false },
     observation: {
       type: String, // Definindo o tipo como String
       default: "", // Definindo um valor padrão vazio

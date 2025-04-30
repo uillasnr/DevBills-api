@@ -11,6 +11,7 @@ import {
 import { Balance } from "../../entities/balance.entity";
 import { Expense } from "../../entities/expense.entities";
 import dayjs from "dayjs";
+import mongoose from "mongoose";
 
 export class TransactionsRepository {
   constructor(private model: typeof TransactionModel) {}
@@ -23,6 +24,7 @@ export class TransactionsRepository {
     type,
     observation,
     category,
+    isFixed,
   }: Transaction & { userId: string }): Promise<Transaction> {
     const createdTransaction = await this.model.create({
       userId,
@@ -32,6 +34,7 @@ export class TransactionsRepository {
       type,
       observation,
       category,
+      isFixed,
     });
 
     return createdTransaction.toObject<Transaction>();
@@ -96,6 +99,19 @@ export class TransactionsRepository {
     return transaction.toObject<Transaction>(); 
   }
   
+  async delete(transactionId: string, userId: string): Promise<boolean> {
+    try {
+      const result = await this.model.findOneAndDelete({
+        _id: transactionId, 
+        userId,
+      });
+  
+      return !!result;
+    } catch (error) {
+      console.error("❌ Erro ao deletar transação:", error);
+      return false;
+    }
+  }
   // Buscar a transação pelo ID no banco de dados
   async getTransactionById(id: string): Promise<Transaction | null> {
     try {

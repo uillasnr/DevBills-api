@@ -20,7 +20,7 @@ export class TransactionsController {
     next: NextFunction
   ) => {
     try {
-      const { userId, title, amount, categoryId, date, type, observation } =
+      const { userId, title, amount, categoryId, date, type, observation, isFixed, } =
         req.body;
 
       const result = await this.transactionsService.create({
@@ -31,6 +31,7 @@ export class TransactionsController {
         date,
         type,
         observation,
+        isFixed,
       });
 
       return res.status(StatusCodes.CREATED).json(result);
@@ -85,7 +86,6 @@ export class TransactionsController {
     }
   };
 
-
   update = async (
     req: BodyRequest<UpdateTransactionDTO> & AuthenticatedRequest<unknown>,
     res: Response,
@@ -94,12 +94,12 @@ export class TransactionsController {
     try {
       const userId = req.user?.id;
       const transactionId = req.params.id;
-      const { title, amount, categoryId, date, type, observation } = req.body;
+      const { title, amount, categoryId, date, type, observation, isFixed } = req.body;
 
       const result = await this.transactionsService.update(
         transactionId,
         userId!,
-        { title, amount, categoryId, date, type, observation }
+        { title, amount, categoryId, date, type, observation, isFixed }
       );
   
       if (!result) {
@@ -107,6 +107,31 @@ export class TransactionsController {
       }
 
       return res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deleteTransaction = async (
+    req: AuthenticatedRequest<unknown>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userId = req.user?.id;
+      const transactionId = req.params.id;
+
+      if (!userId) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'User not authenticated' });
+      }
+
+      const isDeleted = await this.transactionsService.deleteTransaction(transactionId, userId);
+
+      if (!isDeleted) {
+        return res.status(StatusCodes.NOT_FOUND).json({ message: 'Transaction not found or does not belong to the user' });
+      }
+
+     return res.status(StatusCodes.NO_CONTENT).send(); 
     } catch (error) {
       next(error);
     }

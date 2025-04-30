@@ -10,6 +10,7 @@ export const createTransactionsSchema = {
   observation: z.string().optional(),
   date: z.coerce.date(),
   categoryId: z.string().length(24),
+  isFixed: z.boolean().optional(),
 };
 
 // Criando o objeto de transação utilizando o esquema definido acima
@@ -37,6 +38,7 @@ export const updateTransactionsSchema = {
   observation: z.string().optional(),
   date: z.coerce.date().optional(),
   categoryId: z.string().length(24).optional(),
+  isFixed: z.boolean().optional(),
 };
 
 // Criando o objeto de transação utilizando o esquema definido acima
@@ -92,3 +94,7 @@ export type MonthlyReportResultDTO = {
   totalIncome: number;
   totalExpense: number;
 };
+
+export const deleteTransactionSchema = z.object({
+  id: z.string().min(1, "ID da transação é obrigatório"),
+});

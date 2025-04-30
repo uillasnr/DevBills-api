@@ -2,6 +2,7 @@ import { Router } from "express";
 import { ParamsType, validator } from "../middleware/validator.middleware";
 import {
   createTransactionsSchema,
+  deleteTransactionSchema,
   getDashboardSchema,
   getFinancialEvolutionSchema,
   indexTransactionSchema,
@@ -45,6 +46,16 @@ TransactionsRoutes.put(
     type: ParamsType.QUERY,
   }),
   controller.update
+);
+
+TransactionsRoutes.delete(
+  "/:id",
+  authMiddleware,
+  validator({
+    schema: deleteTransactionSchema,
+    type: ParamsType.PARAMS,
+  }),
+  controller.deleteTransaction
 );
 
 TransactionsRoutes.get(

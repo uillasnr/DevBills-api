@@ -14,6 +14,7 @@ type TransactionProps = {
   category: Category;
   type: TransactionType;
   observation?: string;
+  isFixed?: boolean;
 };
 
 export class Transaction {
@@ -25,6 +26,7 @@ export class Transaction {
   public category: Category;
   public type: TransactionType;
   public observation?: string;
+  public isFixed?: boolean;
 
   constructor({
     _id,
@@ -35,6 +37,7 @@ export class Transaction {
     amount,
     category,
     observation,
+    isFixed,
   }: TransactionProps) {
     this._id = _id;
     this.userId = userId;
@@ -44,5 +47,6 @@ export class Transaction {
     this.category = new Category(category);
     this.type = type;
     this.observation = observation;
+    this.isFixed = isFixed;
   }
 }
